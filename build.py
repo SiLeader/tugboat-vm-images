@@ -1,6 +1,8 @@
 import json
-import typin
+import typing
 import subprocess
+import tempfile
+import pathlib
 
 
 def main():
@@ -8,51 +10,58 @@ def main():
         config = json.load(fp)
     base = config['base']
     for os, flavors in config['images'].items():
-        for tag, content in flavors:
+        for tag, content in flavors.items():
             __build_and_push_image(base, os, tag, content)
 
 
 def __build_and_push_image(base: str, os: str, tag: str, content: dict):
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
-            image = __download(
+            td = pathlib.Path(tmpdir)
+            __download(
                 url=content['url'],
-                directory=tmpdir,
+                directory=td,
+                out_file='image.qcow2',
                 compress=content.get('compress', None),
                 sha256=content.get('sha256', None),
                 sha512=content.get('sha512', None),
             )
 
-            imagefile = os.path.join(tmpdir, 'Imagefile')
+            imagefile = td / 'Imagefile'
             with open(imagefile, 'w') as fp:
-                print(f'FROM {image.name}', file=fp)
+                print(f'FROM image.qcow2', file=fp)
                 print(f'ARCH x64', file=fp)
                 print(f'FORMAT {content['type']}', file=fp)
-
-                tag = f'{base}/{os}:{tag}'
-                subprocess.run(
-                    ['./tugboat-cli', 'build', '-t', tag, '-f', imagefile],
-                    check=True
-                )
+            print(imagefile)
+            with open(imagefile) as fp:
+                print(fp.read())
+            tag = f'{base}/{os}:{tag}'
+            subprocess.run(
+                ['./tugboat-cli', 'build', '-t', tag, '-f', str(imagefile), tmpdir],
+                check=True
+            )
     except Exception as e:
         print('Error', e)
 
 
 def __download(
         url: str,
-        directory: str,
+        directory: pathlib.Path,
+        out_file: str,
         compress: typing.Optional[str],
         sha256: typing.Optional[str],
         sha512: typing.Optional[str],
-) -> str:
-    return_file = os.path.join(directory, 'image.qcow2')
+):
+    return_file = directory / out_file
     if compress:
         downloaded = f'{return_file}.{compress}'
+    else:
+        downloaded = str(return_file)
     subprocess.run(['wget', '-O', downloaded, url], check=True)
     if sha512:
-        __checksum('sha512sum', path, sha512)
+        __checksum('sha512sum', downloaded, sha512)
     elif sha256:
-        __checksum('sha256sum', path, sha256)
+        __checksum('sha256sum', downloaded, sha256)
     else:
         raise ArgumentError('Checksum is not available')
     
@@ -63,11 +72,9 @@ def __download(
             case _:
                 raise ArgumentError(f'unsupported compress type {compress}')
 
-    return return_file
-
 
 def __checksum(command: str, path: str, sum_str: str):
-    subprocess.run(f'echo "{sum_str}  {path}" | {command} --check -', check=True)
+    subprocess.run(f'echo "{sum_str}  {path}" | {command} --check -', check=True, shell=True)
 
 
 if __name__ == '__main__':
