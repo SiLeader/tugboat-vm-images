@@ -17,6 +17,7 @@ jobs:
       - name: Login to ghcr.io
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2
         with:
+          registry: ghcr.io
           username: x-access-token
           password: ${{ secrets.GITHUB_TOKEN }}
       
