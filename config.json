@@ -1,5 +1,5 @@
 {
-    "base": "ghcr.io/sileader/tugboat-images",
+    "base": "ghcr.io/sileader/tugboat-vm-images",
     "images": {
         "ubuntu": {
             "24.04": {
