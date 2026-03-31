@@ -16,7 +16,7 @@
         "debian": {
             "trixie": {
                 "type": "qcow2",
-                "url": "https://cloud.debian.org/images/cloud/trixie/20260327-2429/debian-13-generic-amd64.qcow2",
+                "url": "https://cloud.debian.org/images/cloud/trixie/20260327-2429/debian-13-generic-amd64-20260327-2429.qcow2",
                 "sha512": "bfa20ac99e41a860be5a6c1f4c21539b120a1a06e85081f78b2da9361680153182900c16035f59c321302f495bb843995a74bb7dbdb7ba81a49dea6814ab7416"
             }
         },

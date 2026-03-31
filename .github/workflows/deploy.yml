@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - master
+    paths:
+      - build.py
+      - config.json
+      - tugboat-cli
+      - .github/workflows/deploy.yml
   workflow_dispatch:
 
 permissions:
