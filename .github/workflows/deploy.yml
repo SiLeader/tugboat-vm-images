@@ -1,0 +1,23 @@
+name: Build and deploy images
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to ghcr.io
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2
+        with:
+          username: x-access-token
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and deploy
+        shell: bash
+        run: |
+          python3 build.py

@@ -1,0 +1,32 @@
+{
+    "base": "ghcr.io/sileader/tugboat-images",
+    "images": {
+        "ubuntu": {
+            "24.04": {
+                "type": "qcow2",
+                "url": "https://cloud-images.ubuntu.com/noble/20260323/noble-server-cloudimg-amd64.img",
+                "sha256": "6e7016f2c9f4d3c00f48789eb6b9043ba2172ccc1b6b1eaf3ed1e29dd3e52bb3"
+            },
+            "lts": {
+                "type": "qcow2",
+                "url": "https://cloud-images.ubuntu.com/noble/20260323/noble-server-cloudimg-amd64.img",
+                "sha256": "6e7016f2c9f4d3c00f48789eb6b9043ba2172ccc1b6b1eaf3ed1e29dd3e52bb3"
+            }
+        },
+        "debian": {
+            "trixie": {
+                "type": "qcow2",
+                "url": "https://cloud.debian.org/images/cloud/trixie/20260327-2429/debian-13-generic-amd64.qcow2",
+                "sha512": "bfa20ac99e41a860be5a6c1f4c21539b120a1a06e85081f78b2da9361680153182900c16035f59c321302f495bb843995a74bb7dbdb7ba81a49dea6814ab7416"
+            }
+        },
+        "freebsd": {
+            "15.0": {
+                "type": "qcow2",
+                "compress": "xz",
+                "url": "https://download.freebsd.org/releases/VM-IMAGES/15.0-RELEASE/amd64/Latest/FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz",
+                "sha256": "7aa8cd3acba96b05e4343776ee3cc52828c2eea206b16637a7d55d775aadc200"
+            }
+        }
+    }
+}
