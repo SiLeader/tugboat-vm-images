@@ -50,6 +50,8 @@ def __build_and_push_image(base: str, os: str, tag: str, content: dict, dry: boo
             )
     except Exception as e:
         print('Error', e)
+        if dry:
+            raise
 
 
 def __download(
