@@ -1,0 +1,27 @@
+name: Verify images
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - ready_for_review
+      - synchronize
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+     
+      - name: Build and deploy
+        shell: bash
+        run: |
+          python3 build.py --verify
+
