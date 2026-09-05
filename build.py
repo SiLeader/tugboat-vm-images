@@ -1,3 +1,4 @@
+import argparse
 import json
 import typing
 import subprocess
@@ -6,15 +7,20 @@ import pathlib
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verify', action='store_true', help='Verify config.json values')
+    args = parser.parse_args()
+
     with open('config.json') as fp:
         config = json.load(fp)
     base = config['base']
     for os, flavors in config['images'].items():
         for tag, content in flavors.items():
-            __build_and_push_image(base, os, tag, content)
+            __build_and_push_image(base, os, tag, content, dry=args.verify)
 
 
-def __build_and_push_image(base: str, os: str, tag: str, content: dict):
+def __build_and_push_image(base: str, os: str, tag: str, content: dict, dry: bool):
+    tag = f'{base}/{os}:{tag}'
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
             td = pathlib.Path(tmpdir)
@@ -26,6 +32,9 @@ def __build_and_push_image(base: str, os: str, tag: str, content: dict):
                 sha256=content.get('sha256', None),
                 sha512=content.get('sha512', None),
             )
+            if dry:
+                print('OK', tag)
+                return
 
             imagefile = td / 'Imagefile'
             with open(imagefile, 'w') as fp:
@@ -35,13 +44,14 @@ def __build_and_push_image(base: str, os: str, tag: str, content: dict):
             print(imagefile)
             with open(imagefile) as fp:
                 print(fp.read())
-            tag = f'{base}/{os}:{tag}'
             subprocess.run(
                 ['./tugboat-cli', 'build', '-t', tag, '-f', str(imagefile), tmpdir],
                 check=True
             )
     except Exception as e:
         print('Error', e)
+        if dry:
+            raise
 
 
 def __download(
