@@ -8,7 +8,7 @@ import pathlib
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--verify', help='Verify config.json values')
+    parser.add_argument('--verify', action='store_true', help='Verify config.json values')
     args = parser.parse_args()
 
     with open('config.json') as fp:
